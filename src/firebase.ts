@@ -4,13 +4,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-	apiKey: "AIzaSyCDe-4H6zOzf5tI5rkorq6njIkCRKT7uII",
-	authDomain: "pesantrenqu-ee2cf.firebaseapp.com",
-	projectId: "pesantrenqu-ee2cf",
-	storageBucket: "pesantrenqu-ee2cf.appspot.com",
-	messagingSenderId: "487894257410",
-	appId: "1:487894257410:web:38909e1ca2558d7dc5bc1b",
-	measurementId: "G-0FPSW6M1LW",
+	apiKey: "AIzaSyAPV_InUZvc_aKhfKAKdXToVT1IrNlOXI4",
+	authDomain: "menara-unisma.firebaseapp.com",
+	projectId: "menara-unisma",
+	storageBucket: "menara-unisma.appspot.com",
+	messagingSenderId: "862913228595",
+	appId: "1:862913228595:web:3d841402f8bf4371b0d846",
+	measurementId: "G-0YBVZZXSL5",
 };
 
 const app = initializeApp(firebaseConfig);
