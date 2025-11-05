@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAPV_InUZvc_aKhfKAKdXToVT1IrNlOXI4",
@@ -35,7 +34,6 @@ const firebaseConfigBaznas = {
 
 const app = initializeApp(firebaseConfig, "app_menara");
 export const auth = getAuth(app);
-export const db = getFirestore(app);
 
 const appPqu = initializeApp(firebaseConfigPQU, "app_pqu");
 export const authPqu = getAuth(appPqu);
