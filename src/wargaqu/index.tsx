@@ -31,7 +31,7 @@ const WargaquPage = () => {
             }}
         >
             <button onClick={signInWithGoogle}>
-                Sign In With Google For Baznas
+                Sign In With Google For Wargaqu
             </button>
 
             {token && (
