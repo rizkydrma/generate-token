@@ -1,25 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useEffect, useState } from "react";
-import { authPqu } from "../firebase";
-import Silk from "../components/Silk";
-import SplitText from "../components/SplitText";
+import { auth } from "../firebase";
+import SideRays from "../components/SideRays";
+import BlurText from "../components/BlurText";
 
 // ============================================================
 // DESIGN TOKENS
 // ============================================================
 const T = {
-  bg: "#0d0d14", // very dark near-black (like screenshot)
-  cardBg: "rgba(13, 13, 20, 0.6)",
-  text: "#f0fdf4",
-  textSecondary: "#a0a0c0", // muted blue-grey to match dark palette
-  accent: "#e100ff", // magenta to match color2
-  accentHover: "#b800cc",
-  accentGlow: "rgba(225, 0, 255, 0.15)",
+  bg: "#030014",
+  cardBg: "rgba(9, 9, 11, 0.6)",
+  text: "#f4f4f5",
+  textSecondary: "#a1a1aa",
+  accent: "#0ea5e9", // Sky Blue for CampusQu
+  accentHover: "#0284c7",
+  accentGlow: "rgba(14, 165, 233, 0.15)",
   border: "rgba(255, 255, 255, 0.08)",
   borderHover: "rgba(255, 255, 255, 0.16)",
   error: "#f87171",
-  success: "#a78bfa",
+  success: "#38bdf8",
   font: 'Inter, -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif',
   radius: 24,
   radiusSm: 14,
@@ -80,6 +80,15 @@ const S: Record<string, React.CSSProperties> = {
     zIndex: 9999,
   },
 
+  orb: {
+    position: "fixed",
+    borderRadius: "50%",
+    filter: "blur(140px)",
+    pointerEvents: "none",
+    opacity: 0.35,
+    mixBlendMode: "screen",
+  },
+
   container: {
     position: "relative",
     zIndex: 1,
@@ -99,7 +108,7 @@ const S: Record<string, React.CSSProperties> = {
     display: "inline-flex",
     alignItems: "center",
     backgroundColor: "rgba(255, 255, 255, 0.05)",
-    border: "1px solid rgba(255, 255, 255, 0.10)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
     padding: "0.45rem 1rem",
     borderRadius: "999px",
     fontSize: "0.8rem",
@@ -112,7 +121,7 @@ const S: Record<string, React.CSSProperties> = {
 
   pillNew: {
     backgroundColor: "#fff",
-    color: "#0d0d14",
+    color: "#030014",
     padding: "0.15rem 0.5rem",
     borderRadius: "999px",
     fontSize: "0.7rem",
@@ -138,7 +147,7 @@ const S: Record<string, React.CSSProperties> = {
   },
 
   heroTitle: {
-    fontSize: "clamp(2.5rem, 6vw, 4rem)",
+    fontSize: "clamp(2.5rem, 6vw, 4.5rem)",
     fontWeight: 800,
     letterSpacing: "-0.04em",
     lineHeight: 1.1,
@@ -161,10 +170,10 @@ const S: Record<string, React.CSSProperties> = {
   glassResult: {
     width: "100%",
     maxWidth: 720,
-    backgroundColor: "rgba(13, 13, 20, 0.5)",
+    backgroundColor: "rgba(9, 9, 11, 0.45)",
     backdropFilter: "blur(16px)",
     WebkitBackdropFilter: "blur(16px)",
-    border: "1px solid rgba(255, 255, 255, 0.07)",
+    border: "1px solid rgba(255, 255, 255, 0.05)",
     borderRadius: "20px",
     padding: "1.75rem",
     marginTop: "3rem",
@@ -179,12 +188,12 @@ const S: Record<string, React.CSSProperties> = {
     fontWeight: 700,
     fontFamily: T.font,
     backgroundColor: "#fff",
-    color: "#0d0d14",
+    color: "#030014",
     border: "none",
     borderRadius: "999px",
     cursor: "pointer",
     transition: "all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1)",
-    boxShadow: "0 10px 30px rgba(225, 0, 255, 0.25)",
+    boxShadow: "0 10px 30px rgba(255, 255, 255, 0.15)",
     animation: "fadeUp 0.8s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both",
     display: "inline-flex",
     alignItems: "center",
@@ -222,8 +231,8 @@ const S: Record<string, React.CSSProperties> = {
   textarea: {
     width: "100%",
     minHeight: 120,
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    color: "#e6fbf2",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    color: "#e4e4e7",
     fontFamily: '"SF Mono", "Fira Code", "JetBrains Mono", monospace',
     fontSize: "0.8rem",
     lineHeight: 1.6,
@@ -244,9 +253,9 @@ const S: Record<string, React.CSSProperties> = {
     fontSize: "0.75rem",
     fontWeight: 600,
     fontFamily: T.font,
-    backgroundColor: "rgba(255, 255, 255, 0.06)",
+    backgroundColor: "rgba(255,255,255,0.06)",
     color: T.text,
-    border: "1px solid rgba(255, 255, 255, 0.10)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
     borderRadius: "8px",
     cursor: "pointer",
     transition: "all 0.2s ease",
@@ -259,7 +268,7 @@ const S: Record<string, React.CSSProperties> = {
   modalOverlay: {
     position: "fixed",
     inset: 0,
-    backgroundColor: "rgba(5, 5, 10, 0.85)",
+    backgroundColor: "rgba(3, 0, 20, 0.75)",
     backdropFilter: "blur(12px)",
     WebkitBackdropFilter: "blur(12px)",
     display: "flex",
@@ -272,13 +281,13 @@ const S: Record<string, React.CSSProperties> = {
   modalContainer: {
     width: "90%",
     maxWidth: 540,
-    backgroundColor: "rgba(13, 13, 20, 0.95)",
+    backgroundColor: "rgba(9, 9, 11, 0.9)",
     backdropFilter: "blur(20px)",
     WebkitBackdropFilter: "blur(20px)",
     border: "1px solid rgba(255, 255, 255, 0.08)",
     borderRadius: "24px",
     padding: "2.5rem 2rem",
-    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.6)",
+    boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.5)",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -334,7 +343,7 @@ const S: Record<string, React.CSSProperties> = {
     fontFamily: T.font,
     backgroundColor: "rgba(255, 255, 255, 0.08)",
     color: T.text,
-    border: "1px solid rgba(255, 255, 255, 0.12)",
+    border: "1px solid rgba(255, 255, 255, 0.1)",
     borderRadius: "999px",
     cursor: "pointer",
     transition: "all 0.2s ease",
@@ -435,7 +444,7 @@ const Spinner = () => (
 // ============================================================
 // COMPONENT
 // ============================================================
-const PQUPage = () => {
+const CampusQuPage = () => {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -455,7 +464,7 @@ const PQUPage = () => {
     setError("");
     try {
       const provider = new GoogleAuthProvider();
-      const google_sso: { user: any } = await signInWithPopup(authPqu, provider);
+      const google_sso: { user: any } = await signInWithPopup(auth, provider);
       setToken(google_sso?.user?.accessToken ?? "");
       setShowModal(true);
     } catch (err: any) {
@@ -481,14 +490,24 @@ const PQUPage = () => {
       <style>{customKeyframes}</style>
 
       <div style={S.shell}>
-        {/* ---- DYNAMIC BACKGROUND: SILK ---- */}
-        <Silk speed={5} scale={1} color="#1a6b3a" noiseIntensity={1.5} rotation={0} />
+        {/* ---- DYNAMIC BACKGROUND WEBGL SIDE-RAYS ---- */}
+        <SideRays
+          speed={2.0}
+          rayColor1="#0ea5e9"
+          rayColor2="#6366f1"
+          intensity={3.0}
+          spread={3.0}
+          origin="top-right"
+          tilt={-10}
+          opacity={0.75}
+          falloff={1.2}
+        />
 
         <div style={S.container}>
           {/* Status Pill Badge */}
           <div style={S.pillBadge}>
             <span style={S.pillNew}>NEW</span>
-            <span style={{ marginLeft: "0.5rem" }}>PesantrenQu Auth v1.0</span>
+            <span style={{ marginLeft: "0.5rem" }}>CampusQu Auth v1.0</span>
           </div>
 
           {/* Advantages/Features List */}
@@ -497,24 +516,22 @@ const PQUPage = () => {
             <span style={S.bullet}>•</span>
             <span>🔒 Secure Firebase Auth</span>
             <span style={S.bullet}>•</span>
-            <span>🕌 Santri & Wali Portal</span>
+            <span>🎓 Student/Faculty Portal</span>
           </div>
 
           {/* Hero Title */}
           <h1 style={S.heroTitle}>
-            <SplitText
-              text="PesantrenQu Access Token"
-              delay={70}
-              animationFrom={{ opacity: 0, transform: "translate3d(0,35px,0)" }}
-              animationTo={{ opacity: 1, transform: "translate3d(0,0,0)" }}
-              easing="easeOut"
+            <BlurText
+              text="CampusQu Access Token"
+              delay={150}
+              animateBy="words"
+              direction="top"
             />
           </h1>
 
           {/* Subtitle */}
           <p style={S.heroSubtitle}>
-            Securely authenticate with your PesantrenQu account credentials using Google SSO to generate your developer
-            session token.
+            Securely authenticate with your CampusQu account credentials using Google SSO to generate your developer session token.
           </p>
 
           {/* Action Button */}
@@ -528,12 +545,12 @@ const PQUPage = () => {
             onMouseEnter={(e) => {
               if (loading) return;
               e.currentTarget.style.transform = "scale(1.05)";
-              e.currentTarget.style.boxShadow = "0 12px 35px rgba(16, 181, 129, 0.35)";
+              e.currentTarget.style.boxShadow = "0 12px 35px rgba(255, 255, 255, 0.25)";
             }}
             onMouseLeave={(e) => {
               if (loading) return;
               e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow = "0 10px 30px rgba(16, 181, 129, 0.2)";
+              e.currentTarget.style.boxShadow = "0 10px 30px rgba(255, 255, 255, 0.15)";
             }}
           >
             {loading ? (
@@ -616,12 +633,12 @@ const PQUPage = () => {
                       width: 56,
                       height: 56,
                       borderRadius: "50%",
-                      backgroundColor: "rgba(52, 211, 153, 0.1)",
+                      backgroundColor: "rgba(56, 189, 248, 0.1)",
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       color: T.success,
-                      border: "1px solid rgba(52, 211, 153, 0.2)",
+                      border: "1px solid rgba(56, 189, 248, 0.2)",
                       marginBottom: "1rem",
                     }}
                   >
@@ -639,7 +656,7 @@ const PQUPage = () => {
                     </svg>
                   </div>
                   <h2 style={S.modalTitle}>Authentication Successful</h2>
-                  <p style={S.modalSubtitle}>Your PesantrenQu developer token is ready. Copy the key below.</p>
+                  <p style={S.modalSubtitle}>Your CampusQu developer token is ready. Copy the key below.</p>
                 </div>
 
                 <div style={{ width: "100%", position: "relative" }}>
@@ -653,7 +670,7 @@ const PQUPage = () => {
                         ...(focused
                           ? {
                               borderColor: T.accent,
-                              boxShadow: `0 0 0 3px rgba(16, 181, 129, 0.25)`,
+                              boxShadow: `0 0 0 3px rgba(14, 165, 233, 0.25)`,
                             }
                           : {}),
                       }}
@@ -668,10 +685,10 @@ const PQUPage = () => {
                       }}
                       onClick={copyToken}
                       onMouseEnter={(e) => {
-                        if (!copied) e.currentTarget.style.backgroundColor = "rgba(16, 181, 129, 0.15)";
+                        if (!copied) e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.12)";
                       }}
                       onMouseLeave={(e) => {
-                        if (!copied) e.currentTarget.style.backgroundColor = "rgba(16, 181, 129, 0.08)";
+                        if (!copied) e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.06)";
                       }}
                     >
                       {copied ? <CheckIcon /> : <CopyIcon />}
@@ -684,13 +701,13 @@ const PQUPage = () => {
                   style={S.modalDoneBtn}
                   onClick={() => setShowModal(false)}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(16, 181, 129, 0.2)";
-                    e.currentTarget.style.borderColor = "rgba(16, 181, 129, 0.3)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.25)";
                     e.currentTarget.style.transform = "translateY(-1px)";
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "rgba(16, 181, 129, 0.12)";
-                    e.currentTarget.style.borderColor = "rgba(16, 181, 129, 0.2)";
+                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.08)";
+                    e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
                     e.currentTarget.style.transform = "translateY(0)";
                   }}
                 >
@@ -705,4 +722,4 @@ const PQUPage = () => {
   );
 };
 
-export default PQUPage;
+export default CampusQuPage;

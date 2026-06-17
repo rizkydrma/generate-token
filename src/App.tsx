@@ -3,6 +3,7 @@ import BaznasPage from "./baznas";
 import HomePage from "./Home";
 import PQUPage from "./pqu";
 import WargaquPage from "./wargaqu";
+import CampusQuPage from "./campusqu";
 import Navbar from "./components/Navbar";
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
             <Navbar />
             <Routes>
                 <Route path="/" element={<HomePage />} />
+                <Route path="/campusqu" element={<CampusQuPage />} />
                 <Route path="/pqu" element={<PQUPage />} />
                 <Route path="/baznas" element={<BaznasPage />} />
                 <Route path="/wargaqu" element={<WargaquPage />} />
